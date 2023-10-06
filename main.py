@@ -1,18 +1,6 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, ForeignKey, insert
-import psycopg2
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-# Connect to my db
-# connection = psycopg2.connect(user="postgres", password="postgres")
-# connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-#
-# cursor = connection.cursor()
-# sql_create_database = cursor.execute('create database things_2')
-#
-# cursor.close()
-# connection.close()
-
-engine = create_engine("postgresql+psycopg2://postgres:postgres@localhost/things_2", echo=True,
+engine = create_engine("postgresql+psycopg2://postgres:postgres@localhost/things_2", echo=False,
                        pool_size=6, max_overflow=10)
 engine.connect()
 print(engine)
@@ -56,16 +44,22 @@ ins_posts = insert(posts).values(
 # Вывод наших созданных параметров
 # print(ins.compile().params)
 
-_connect = engine.connect()
-result = _connect.execute(ins_users)
+# insert to db
+conn = engine.connect()
+result = conn.execute(ins_users)
 print(result.rowcount)
-result = _connect.execute(ins_posts)
+
+# commit insert
+conn.commit()
+result = conn.execute(ins_posts)
+conn.commit()
 
 # Select
 s_1 = users.select()
 s_2 = posts.select()
 
-result = _connect.execute(s_1)
+# Вывод селектов в терминал
+result = conn.execute(s_1)
 print(result.fetchall())
-result = _connect.execute(s_2)
+result = conn.execute(s_2)
 print(result.fetchall())
