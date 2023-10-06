@@ -2,14 +2,15 @@ from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, 
 
 # Create connection db
 engine = create_engine("postgresql+psycopg2://postgres:postgres@localhost/things_2",
-                       echo=False, pool_size=6, max_overflow=10)
+                       echo=True, pool_size=6, max_overflow=10)
 engine.connect()
 # print(engine)
 
 # Metadata - содержит всю информацию о БД и таблицах
 metadata = MetaData()
-# Создаем таблицы и колонки
 
+
+# Создаем таблицы и колонки
 users = Table('users', metadata,
               Column('id', Integer(), primary_key=True),
               Column('username', String(15)),
@@ -70,3 +71,7 @@ for row in conn.execute(s_1):
     print(row)
 for row in conn.execute(s_2):
     print(row)
+
+conn.commit()
+metadata.drop_all(engine)
+
