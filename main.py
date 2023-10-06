@@ -1,9 +1,10 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, ForeignKey, insert
 
-engine = create_engine("postgresql+psycopg2://postgres:postgres@localhost/things_2", echo=False,
-                       pool_size=6, max_overflow=10)
+# Create connection db
+engine = create_engine("postgresql+psycopg2://postgres:postgres@localhost/things_2",
+                       echo=False, pool_size=6, max_overflow=10)
 engine.connect()
-print(engine)
+# print(engine)
 
 # Metadata - содержит всю информацию о БД и таблицах
 metadata = MetaData()
@@ -20,15 +21,15 @@ posts = Table('posts', metadata,
               Column('description', String(15))
               )
 
-# Вывод таблиц
+# Вывод в теринал таблиц
 # for _tables in metadata.tables:
 #     print(metadata.tables[_tables])
 
-# Вывод колонок
+# Вывод в терминал колонок
 # print(posts.columns)
 # print(users.columns)
 
-# Создаем в БД таблицы и колонки
+# Отправляем в БД таблицы и колонки
 metadata.create_all(engine)
 
 # Insert параметров в ячейки таблицы users
@@ -60,6 +61,12 @@ s_2 = posts.select()
 
 # Вывод селектов в терминал
 result = conn.execute(s_1)
-print(result.fetchall())
+# Удобно, но нагружает память.
+# print(result.fetchall())
 result = conn.execute(s_2)
-print(result.fetchall())
+# Лучше сделать цикл:
+# print(result.fetchall())
+for row in conn.execute(s_1):
+    print(row)
+for row in conn.execute(s_2):
+    print(row)
